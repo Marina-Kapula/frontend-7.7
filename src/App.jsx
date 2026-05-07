@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import blogsService from './services/blogs'
 
 function App() {
+  throw new Error('test error') // ← ВОТ СЮДА
+
   const [blogs, setBlogs] = useState([])
 
   useEffect(() => {
