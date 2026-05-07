@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import blogsService from './services/blogs'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 function App() {
-  throw new Error('test error') // ← ВОТ СЮДА
-
   const [blogs, setBlogs] = useState([])
 
   useEffect(() => {
@@ -13,15 +12,26 @@ function App() {
   }, [])
 
   return (
-    <div>
-      <h1>Blogs</h1>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div>
+              <h1>Blogs</h1>
 
-      {blogs.map(blog => (
-        <div key={blog.id}>
-          {blog.title}
-        </div>
-      ))}
-    </div>
+              {blogs.map(blog => (
+                <div key={blog.id}>
+                  {blog.title}
+                </div>
+              ))}
+            </div>
+          }
+        />
+
+        <Route path="*" element={<h2>Page not found</h2>} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
