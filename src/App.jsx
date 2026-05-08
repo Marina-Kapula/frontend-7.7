@@ -1,9 +1,16 @@
+import Notification from './components/Notification'
 import { useEffect, useState } from 'react'
 import blogsService from './services/blogs'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
+import useNotificationStore from './store/notificationStore'
+
 function App() {
   const [blogs, setBlogs] = useState([])
+
+  const setNotification = useNotificationStore(
+    (state) => state.setNotification
+  )
 
   useEffect(() => {
     blogsService.getAll().then(data => {
@@ -11,13 +18,19 @@ function App() {
     })
   }, [])
 
+  useEffect(() => {
+    setNotification('Zustand works!')
+  }, [])
+
   return (
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"   
+          path="/"
           element={
             <div>
+              <Notification />
+
               <h1>Blogs</h1>
 
               {blogs.map(blog => (
@@ -34,7 +47,5 @@ function App() {
     </BrowserRouter>
   )
 }
-
-
 
 export default App
