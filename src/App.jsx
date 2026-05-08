@@ -15,7 +15,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path="/"   
           element={
             <div>
               <h1>Blogs</h1>
@@ -34,5 +34,7 @@ function App() {
     </BrowserRouter>
   )
 }
+
+
 
 export default App
