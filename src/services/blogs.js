@@ -7,4 +7,18 @@ const getAll = async () => {
   return res.data
 }
 
-export default { getAll }
+const create = async (blog) => {
+  const res = await axios.post(baseUrl, blog)
+  return res.data
+}
+
+const update = async (id, blog) => {
+  const res = await axios.put(`${baseUrl}/${id}`, blog)
+  return res.data
+}
+
+const remove = async (id) => {
+  await axios.delete(`${baseUrl}/${id}`)
+}
+
+export default { getAll, create, update, remove }

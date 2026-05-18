@@ -25,21 +25,18 @@ const useBlogStore = create((set, get) => ({
       likes: (blog.likes ?? 0) + 1,
     }
 
-    try {
-      const returned = await blogsService.update(id, updated)
+    const returned = await blogsService.update(id, updated)
 
-      set((state) => ({
-        blogs: state.blogs.map((b) =>
-          String(b.id) === String(id) ? returned : b,
-        ),
-      }))
-    } catch (err) {
-      console.error(err)
-    }
+    set((state) => ({
+      blogs: state.blogs.map((b) =>
+        String(b.id) === String(id) ? returned : b,
+      ),
+    }))
   },
 
-  deleteBlog: async (id) => {
+  removeBlog: async (id) => {
     await blogsService.remove(id)
+
     set((state) => ({
       blogs: state.blogs.filter((b) => String(b.id) !== String(id)),
     }))

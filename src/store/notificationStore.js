@@ -5,6 +5,10 @@ const useNotificationStore = create((set) => ({
 
   setNotification: (message) => {
     set({ message })
+
+    setTimeout(() => {
+      set({ message: '' })
+    }, 3000)
   },
 }))
 
