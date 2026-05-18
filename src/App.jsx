@@ -1,21 +1,20 @@
 import Notification from './components/Notification'
-import { useEffect, useState } from 'react'
-import blogsService from './services/blogs'
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import useNotificationStore from './store/notificationStore'
+import useBlogStore from './store/blogStore'
 
 function App() {
-  const [blogs, setBlogs] = useState([])
-
   const setNotification = useNotificationStore(
     (state) => state.setNotification
   )
 
+  const blogs = useBlogStore((state) => state.blogs)
+  const fetchBlogs = useBlogStore((state) => state.fetchBlogs)
+
   useEffect(() => {
-    blogsService.getAll().then(data => {
-      setBlogs(data)
-    })
+    fetchBlogs()
   }, [])
 
   useEffect(() => {
@@ -33,7 +32,7 @@ function App() {
 
               <h1>Blogs</h1>
 
-              {blogs.map(blog => (
+              {blogs.map((blog) => (
                 <div key={blog.id}>
                   {blog.title}
                 </div>

@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 
 const useNotificationStore = create((set) => ({
-  notification: '',
+  message: '',
 
-  setNotification: (message) => set({ notification: message }),
-
-  clearNotification: () => set({ notification: '' }),
+  setNotification: (message) => {
+    set({ message })
+  },
 }))
 
 export default useNotificationStore

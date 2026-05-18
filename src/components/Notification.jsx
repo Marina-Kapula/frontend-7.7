@@ -1,17 +1,11 @@
 import useNotificationStore from '../store/notificationStore'
 
-const Notification = () => {
-  const notification = useNotificationStore(
-    (state) => state.notification
-  )
+function Notification() {
+  const message = useNotificationStore((state) => state.message)
 
-  if (!notification) return null
+  if (!message) return null
 
-  return (
-    <div>
-      {notification}
-    </div>
-  )
+  return <div>{message}</div>
 }
 
 export default Notification

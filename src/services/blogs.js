@@ -1,8 +1,10 @@
+import axios from 'axios'
+
 const baseUrl = '/api/blogs'
 
 const getAll = async () => {
-  const response = await fetch(baseUrl)
-  return await response.json()
+  const res = await axios.get(baseUrl)
+  return res.data
 }
 
 export default { getAll }
