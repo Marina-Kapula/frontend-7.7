@@ -1,16 +1,14 @@
-const key = 'loggedBlogappUser'
+const KEY = 'loggedBlogappUser'
 
-const getUser = () => {
-  const userJSON = window.localStorage.getItem(key)
-  return userJSON ? JSON.parse(userJSON) : null
+export const getUser = () => {
+  const json = window.localStorage.getItem(KEY)
+  return json ? JSON.parse(json) : null
 }
 
-const saveUser = (user) => {
-  window.localStorage.setItem(key, JSON.stringify(user))
+export const saveUser = (user) => {
+  window.localStorage.setItem(KEY, JSON.stringify(user))
 }
 
-const removeUser = () => {
-  window.localStorage.removeItem(key)
+export const removeUser = () => {
+  window.localStorage.removeItem(KEY)
 }
-
-export default { getUser, saveUser, removeUser }

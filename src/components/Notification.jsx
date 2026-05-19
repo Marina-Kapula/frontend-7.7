@@ -1,11 +1,15 @@
 import useNotificationStore from '../store/notificationStore'
 
 function Notification() {
-  const message = useNotificationStore(state => state.message)
+  const message = useNotificationStore(s => s.message)
 
   if (!message) return null
 
-  return <div>{message}</div>
+  return (
+    <div style={{ padding: 10, background: '#ddd' }}>
+      {message}
+    </div>
+  )
 }
 
 export default Notification

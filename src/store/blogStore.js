@@ -1,48 +1,23 @@
 import { create } from 'zustand'
-import blogsService from '../services/blogs'
+import blogService from '../services/blogs'
 
 const useBlogStore = create((set, get) => ({
   blogs: [],
 
   fetchBlogs: async () => {
-    const blogs = await blogsService.getAll()
+    const blogs = await blogService.getAll()
     set({ blogs })
   },
 
-  createBlog: async (blog) => {
-    const newBlog = await blogsService.create(blog)
-    set((state) => ({
-      blogs: state.blogs.concat(newBlog),
-    }))
+  likeBlog: (id) => {
+    const blogs = get().blogs.map((b) =>
+      b.id === id ? { ...b, likes: b.likes + 1 } : b,
+    )
+    set({ blogs })
   },
 
-  likeBlog: async (id) => {
-    const blog = get().blogs.find((b) => String(b.id) === String(id))
-    if (!blog) return
-
-    const updated = {
-      ...blog,
-      likes: (blog.likes ?? 0) + 1,
-    }
-
-    try {
-      const returned = await blogsService.update(id, updated)
-
-      set((state) => ({
-        blogs: state.blogs.map((b) =>
-          String(b.id) === String(id) ? returned : b,
-        ),
-      }))
-    } catch (err) {
-      console.error(err)
-    }
-  },
-
-  deleteBlog: async (id) => {
-    await blogsService.remove(id)
-    set((state) => ({
-      blogs: state.blogs.filter((b) => String(b.id) !== String(id)),
-    }))
+  deleteBlog: (id) => {
+    set({ blogs: get().blogs.filter((b) => b.id !== id) })
   },
 }))
 

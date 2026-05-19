@@ -1,17 +1,12 @@
 import { create } from 'zustand'
-import persistentUser from '../services/persistentUser'
+import userService from '../services/users'
 
 const useUserStore = create((set) => ({
-  user: persistentUser.getUser(),
+  users: [],
 
-  setUser: (user) => {
-    set({ user })
-    persistentUser.saveUser(user)
-  },
-
-  clearUser: () => {
-    set({ user: null })
-    persistentUser.removeUser()
+  fetchUsers: async () => {
+    const users = await userService.getAll()
+    set({ users })
   },
 }))
 

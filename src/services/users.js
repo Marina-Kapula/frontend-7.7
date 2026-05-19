@@ -1,13 +1,10 @@
+import axios from 'axios'
+
 const baseUrl = '/api/users'
 
 const getAll = async () => {
-  const response = await fetch(baseUrl)
-  return await response.json()
+  const res = await axios.get(baseUrl)
+  return res.data
 }
 
-const getOne = async (id) => {
-  const response = await fetch(`${baseUrl}/${id}`)
-  return await response.json()
-}
-
-export default { getAll, getOne }
+export default { getAll }

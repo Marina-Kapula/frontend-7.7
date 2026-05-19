@@ -1,134 +1,119 @@
-import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import axios from 'axios'
 
+import Users from './pages/Users'
+import User from './pages/User'
 import Notification from './components/Notification'
-import LoginForm from './components/LoginForm'
-import BlogForm from './components/BlogForm'
 
 import useNotificationStore from './store/notificationStore'
 import useBlogStore from './store/blogStore'
-import useUserStore from './store/userStore'
+
+function Comments({ blog, fetchBlogs }) {
+  const [text, setText] = useState('')
+
+  const addComment = async (e) => {
+    e.preventDefault()
+
+    const updatedBlog = {
+      ...blog,
+      comments: blog.comments ? [...blog.comments, text] : [text]
+    }
+
+    await axios.put(`/api/blogs/${blog.id}`, updatedBlog)
+
+    setText('')
+    fetchBlogs()
+  }
+
+  return (
+    <div style={{ marginTop: 10 }}>
+      <h4>comments</h4>
+
+      <ul>
+        {(blog.comments || []).map((c, i) => (
+          <li key={i}>{c}</li>
+        ))}
+      </ul>
+
+      <form onSubmit={addComment}>
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <button type="submit">add comment</button>
+      </form>
+    </div>
+  )
+}
 
 function App() {
-  const setNotification = useNotificationStore((s) => s.setNotification)
+  const setNotification = useNotificationStore(s => s.setNotification)
 
-  const blogs = useBlogStore((s) => s.blogs)
-  const fetchBlogs = useBlogStore((s) => s.fetchBlogs)
-  const likeBlog = useBlogStore((s) => s.likeBlog)
-  const removeBlog = useBlogStore((s) => s.removeBlog)
-  const createBlog = useBlogStore((s) => s.createBlog)
-
-  const user = useUserStore((s) => s.user)
-  const setUser = useUserStore((s) => s.setUser)
-  const clearUser = useUserStore((s) => s.clearUser)
+  const blogs = useBlogStore(s => s.blogs) ?? []
+  const fetchBlogs = useBlogStore(s => s.fetchBlogs)
+  const likeBlog = useBlogStore(s => s.likeBlog)
+  const deleteBlog = useBlogStore(s => s.deleteBlog)
 
   useEffect(() => {
     fetchBlogs()
   }, [])
 
   useEffect(() => {
-    setNotification('Zustand works!')
+    setNotification('App loaded')
   }, [])
-
-  const handleLogin = async (credentials) => {
-    const fakeUser = {
-      username: credentials.username,
-      name: credentials.username,
-    }
-
-    setUser(fakeUser)
-
-    setNotification(`Welcome ${fakeUser.name}`)
-  }
-
-  const handleLogout = () => {
-    clearUser()
-    setNotification('Logged out')
-  }
-
-  const handleCreate = async (blog) => {
-    await createBlog({
-      ...blog,
-      likes: 0,
-    })
-
-    setNotification(`Created ${blog.title}`)
-  }
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div>
-              <Notification />
+      <div>
 
-              <h1>Blogs</h1>
+        {/* NAV */}
+        <nav style={{ marginBottom: 20 }}>
+          <Link to="/">Blogs</Link>{' '}
+          <Link to="/users">Users</Link>
+        </nav>
 
-              {!user ? (
-                <LoginForm onLogin={handleLogin} />
-              ) : (
-                <div>
-                  <p>
-                    {user.name} logged in
-                  </p>
+        <Notification />
 
-                  <button onClick={handleLogout}>
-                    logout
-                  </button>
+        <Routes>
 
-                  <h2>Create blog</h2>
+          {/* BLOGS */}
+          <Route
+            path="/"
+            element={
+              <div>
+                <h1>Blogs</h1>
 
-                  <BlogForm onCreate={handleCreate} />
+                {blogs.map(blog => (
+                  <div key={blog.id} style={{ marginBottom: 20 }}>
 
-                  <hr />
+                    <div><b>{blog.title}</b></div>
+                    <div>likes: {blog.likes}</div>
 
-                  {blogs.map((blog) => (
-                    <div
-                      key={blog.id}
-                      style={{
-                        border: '1px solid black',
-                        padding: 10,
-                        marginBottom: 10,
-                      }}
-                    >
-                      <div>
-                        <strong>{blog.title}</strong>
-                      </div>
+                    <button onClick={() => likeBlog(blog.id)}>
+                      like
+                    </button>
 
-                      <div>{blog.author}</div>
+                    <button onClick={() => deleteBlog(blog.id)}>
+                      delete
+                    </button>
 
-                      <div>{blog.url}</div>
+                    <Comments blog={blog} fetchBlogs={fetchBlogs} />
+                  </div>
+                ))}
+              </div>
+            }
+          />
 
-                      <div>
-                        likes: {blog.likes}
-                      </div>
+          {/* USERS */}
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<User />} />
 
-                      <button
-                        onClick={() => likeBlog(blog.id)}
-                      >
-                        like
-                      </button>
+          {/* 404 */}
+          <Route path="*" element={<h2>Page not found</h2>} />
 
-                      <button
-                        onClick={() => removeBlog(blog.id)}
-                      >
-                        delete
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          }
-        />
-
-        <Route
-          path="*"
-          element={<h2>Page not found</h2>}
-        />
-      </Routes>
+        </Routes>
+      </div>
     </BrowserRouter>
   )
 }
